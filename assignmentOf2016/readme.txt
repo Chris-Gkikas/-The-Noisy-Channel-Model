@@ -27,4 +27,4 @@ inputFile.txt		2%	   11	     1090           99.9%
 inputFile.txt		5%	   11	     1509           9.18%
 inputFile.txt		10%	   11	     2447           7.58%
 
-(Se periptwsh pou den emfanizontai stoixismena, theste tab width=8)
+(if the results are not well alligned, set tab width=8)
