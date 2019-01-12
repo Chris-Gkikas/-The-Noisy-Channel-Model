@@ -1,5 +1,8 @@
 # The-Noisy-Channel-Model
-A simulation of the Noisy Channel Model plus data redundancy and security (encoder/decoder &amp; encryption/decryption)
+(https://en.wikipedia.org/wiki/Noisy-channel_coding_theorem)
+
+A simulation of the Noisy Channel Model plus data redundancy and security (encoder/decoder &amp; encryption/decryption),
+levels of noise interference and data corruption.
 
 
 HOW TO RUN IT
