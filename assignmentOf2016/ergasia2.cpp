@@ -4,75 +4,92 @@
 #include <ctime>
 #include <cmath>
 #include <iomanip>
+
 using namespace std;
+
 int main(int argc,char *argv[]) {
-	int P=atoi(argv[3]);									//convert string number to integer number
- 	int N=atoi(argv[4]);									//convert string number to integer number
-	srand(time(NULL));										//κάνω seed τον generator srand, με τη χρονική στιγμή έναρξης του προγράμματος, ώστε η rand να τροφοδοτείται κάθε φορά με διαφορετική ακολουθία αριθμών.
-	char srcBuff[(int)ceil(log2(N*127))] ={};				//Ν*127 μέγιστος αριθμός, πόσα bits χρειάζονται για τον αριθμό αυτό;--> log2(N*127), άρα τοσες θα ειναι και οι θεσεις του πινακα.
-	char destBuff[(int)ceil(log2(N*127))]={};				//ceil για στρογγυλοποιηση του log2 προς τα πάνω. (int) type cast απο double που γυρναει η ceil, σε int για να δεσμευθουν οι θέσεις του πίνακα.
+	
+	int P=atoi(argv[3]);							//convert string number to integer number
+ 	int N=atoi(argv[4]);							//convert string number to integer number
+	srand(time(NULL));							//seed the generator sran
+	char srcBuff[(int)ceil(log2(N*127))] ={};				//Ν*127 maxNumber,how many bits do we need??-->  log2(N*127), so this is going to be the array capacity
+	char destBuff[(int)ceil(log2(N*127))]={};	
+	
 	if(argc!=5){
 		cout<< "\nError: You should provide 5 arguments."<<endl;
 		cout<< "Usage: <"<<argv[0]<<"> <inputFile.txt> <outputFile.txt> <Possibility> <Key>."<<endl;
-		return 0;}
+		return 0;
+	}
 	ifstream inFile(argv[1]);
+	
 	if(!inFile.is_open()){
+	
 		cout << "\nError: Could not open input file or file may not even exist." <<endl;
-		return 0;}
+		return 0;
+	}
 	ofstream outFile(argv[2]);
 	if(!outFile.is_open()){
 		cout << "\nError: Could not create/open <"<<argv[2]<<"> file." <<endl;
-		return 0;}
+		return 0;
+	}
 	char ch;
-	int numberOfBits=0;										//numberOfBits γιατί οι επόμενες θέσεις του πίνακα περιέχουν ενδεχομένως απομεινάρια απο προηγούμενα στοιχεία με περισσότερα bits.
-	int reps=0;												//επαναποστολές
+	int numberOfBits=0;							//numberOfBits because probably it's going to have some leftovers from previous elements with much more bits 
+	int reps=0;								//resends
 	while(!inFile.eof()){
-		inFile.get(ch);										//δε χρησιμοποιώ inFile >> ch  ώστε να δέχεται και το space.
-		unsigned int ascii = (int)ch;						//type casting απο char σε int, unsigmed για να είναι πάντα θετικό. ch*N είναι  η κωδικοποίηση.
-		unsigned  long int CryptAscii= ascii*N;				//Κ Ρ Υ Π Τ Ο Γ Ρ Α Φ Η Σ Η 		(N το κλειδί)
+		inFile.get(ch);										
+		unsigned int ascii = (int)ch;					// ch*N a very simple encoder
+		unsigned  long int CryptAscii= ascii*N;				// ENCRYPTION (N is the key)
 		int remainder=0;
 		int i=0;
 		numberOfBits=0;
 
 //////////////////////////////// DECIMAL TO BINARY  ///////////////////////////////
 		while (CryptAscii!=0){
-			remainder = CryptAscii%2;						//υπόλοιπο
+			remainder = CryptAscii%2;						
 			if(remainder==1) srcBuff[i]='1';
 			else srcBuff[i]='0';
 			CryptAscii /= 2;
 		    numberOfBits++;
-		    ++i;}
+		    ++i;
+		}
 //////////////////////////////// END DECIMAL TO BINARY //////////////////////////////
+		
+		
+		
 
-/////////////////////// ΜΕΤΑΦΟΡΑ ΑΠΟ srcBuff(ΑΠΟΣΤΟΛΕΑΣ) ΣΕ destBuff(ΠΑΡΑΛΗΠΤΗΣ) KAI MUTATION ME ΠΙΘΑΝΟΤΗΤΑ P  //////////////////////
+/////////////////////// transfer from srcBuff(sender) to destBuff(reciever) and a chance of mutation with possibility P //////////////////////
 		bool flag=true;
 		while(flag){
 			reps++;
-			for(int i=0; i<numberOfBits; i++){								// μεταφορά από τον έναν buffer  στον άλλον.
+			for(int i=0; i<numberOfBits; i++){								
 				destBuff[i]=srcBuff[i];
-				bool mutation = (rand() % 100)+1 <= P;						//η (rand()%100)+1 δίνει αριθμό μεταξύ 0 και 100. Η πιθανότητα αυτού του αριθμου να είναι <=Ρ είναι Ρ%.
-				if(mutation) destBuff[i]=destBuff[i]=='1' ? '0' : '1';		//if destBuff[i]=='1' then destBuff[i]='0' else destBuff[i]='1'
+				bool mutation = (rand() % 100)+1 <= P;						//(rand()%100)+1 gives a number between 0 and 100. The possibility of this number being <=Ρ it's Ρ%.
+				if(mutation) destBuff[i]=destBuff[i]=='1' ? '0' : '1';	
 			}
 ////////////////////////	 BINARY TO DECIMAL	/////////////////////////////////
 
-			unsigned long int DecryptAscii=0;								//μηγενισμός και χτίσιμο από την αρχή
+			unsigned long int DecryptAscii=0;							
 			int base=1;
 			for(int i=0; i<numberOfBits; i++){
 				if(destBuff[i]=='1') DecryptAscii +=  base;
-				base *= 2;		}											// η δύναμη παντα 1, η βάση διπλασιάζεται σε κάθε επανάληψη. 1  2  4  8  16  32  64.....
+				base *= 2;		}							// power always 1, the base doubles in every iteration. 1  2  4  8  16  32  64.....
 //////////////////////////////////// END BINARY TO DECIMAL	//////////////////////////////////////
 
 ////////////////////// WRITE TO OUTPUT FILE   ////////////////////////////////////////////////////
 			if(DecryptAscii%N==0){
-				DecryptAscii/=N;											//ΑΠΟΚΡΥΠΤΟΓΡΑΦΗΣΗ
-				if(DecryptAscii<=127) outFile<<(char)DecryptAscii;          //type cast απο int ascii σε char ascii
+				DecryptAscii/=N;								// DECRYPTION
+				if(DecryptAscii<=127) outFile<<(char)DecryptAscii;         
 				else outFile<<"😣";
 				DecryptAscii=0;
-				flag=false;}
+				flag=false;
+			}
 		}
 	}
+	
 	inFile.close();
 	outFile.close();
+	
+	
 ///////////////////////////// COMPARE INPUT AND OUTPUT FILE CHAR BY CHAR ///////////////////////////
 	inFile.open(argv[1]);
 	ifstream finalOutFile(argv[2]);
@@ -83,7 +100,8 @@ int main(int argc,char *argv[]) {
 		inFile.get(ich);
 		finalOutFile.get(och);
 		if(ich==och) same++;
-		else	diff++;}
+		else	diff++;
+	}
 	cout<<argv[1]<<"		"<<argv[3]<<"%"<<"	   "<<argv[4]<<"	     "<<reps<<"           "<<setprecision(3)<<(same/(float)(same+diff))*100<<"%"<<endl;
 	inFile.close();
 	finalOutFile.close();
