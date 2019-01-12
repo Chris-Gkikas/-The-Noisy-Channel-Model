@@ -1,6 +1,6 @@
 ######################## PINAKAS EKTELESEWN #########################
  
-INPUT FILE          POSSIBILITY     N     RESENDTIMES     ACCURACY
+INPUT FILE          POSSIBILITY     N     SENTCHARS     ACCURACY
 ----------------------------------------------------------------------
 inputFile.txt		0%	   1	     871           100%
 inputFile.txt		2%	   1	     871           86.3%
