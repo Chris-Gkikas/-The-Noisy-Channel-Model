@@ -1,6 +1,6 @@
 ######################## PINAKAS EKTELESEWN #########################
  
-ARXEIO EISODOY     POSSIBILITY     N     EPANALHPSEIS     EUSTOXIA
+INPUT FILE     POSSIBILITY     N     RESENDTIMES     ACCURACY
 ----------------------------------------------------------------------
 inputFile.txt		0%	   1	     871           100%
 inputFile.txt		2%	   1	     871           86.3%
